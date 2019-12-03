@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: ECS CX Interview Questions Scenario 2 Template 2
+
+Transform: AWS::Serverless-2016-10-31
+
+Metadata:
+
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Lambda configuration
+        Parameters:
+          - pArtifactS3BucketName
+          - pArtifactS3Key
+          - pLogLevel
+    ParameterLabels:
+      pArtifactS3BucketName:
+        default: What is the bucket name of the source code?
+      pArtifactS3Key:
+        default: What is the file name of the source code?
+      pLogLevel:
+        default: What level of logging for the Lambda?
+
+Parameters:
+
+  pArtifactS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$
+    ConstraintDescription: bucket name can include numbers, lowercase
+      letters, uppercase letters, periods (.), and hyphens (-). It cannot start or
+      end with a hyphen (-).
+    Description: S3 bucket name for the Cfn assets. bucket name
+      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
+      It cannot start or end with a hyphen (-).
+    Type: String
+
+  pArtifactS3Key:
+    AllowedPattern: ^[0-9a-zA-Z-\/\.]*$
+    ConstraintDescription: key can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/). It cannot start or end
+      with forward slash (/) because they are automatically appended.
+    Description: S3 key for the Lambda zipfile. key
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/). It cannot start or end with forward slash (/) because they
+      are automatically appended.
+    Type: String
+    Default: GetItemDynamoDbLambda.zip
+
+  pLogLevel:
+    Description: verbosity level of function loggers
+    Type: String
+    Default: DEBUG
+    AllowedValues:
+      - CRITICAL
+      - ERROR
+      - WARNING
+      - INFO
+      - DEBUG
+
+Resources:
+
+  rGetCustomerInformationAppFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+      # Add policy to read dynamodb
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  # Complete Lambda resource based on requirements
+  rGetCustomerInformationAppFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+        Bucket: # Bucket Name from parameters
+        Key: # Key from parameters
+
+  # Complete DynamoDb resource for string attribute "PhoneNumber"
+  rCustomerInformationDynamoDb:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+
+  GetCustomerInformationAppFunctionRole:
+    Description: IAM function role Arn for the Get Customer Information App Function
+    Value: # Complete me
+
+  GetCustomerInformationLambdaFunction:
+    Description: Arn of Get Customer information Lambda Function
+    Value: # Complete me
+
+  CustomerInformationDynamoDb:
+    Description: Customer Information Dynamo DB Table name
+    Value: # Complete me
