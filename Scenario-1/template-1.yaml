@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: ECS Infrastructure Interview Template 1
 
-Transform: AWS::Serverless-2016-10-31
 
 Parameters:
 
@@ -60,6 +59,17 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/AmazonGlacierFullAccess
+      Policies:
+        - PolicyName: allow cloudwatch log
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Effect: Allow
+              Resource: '*'
 
   rLambdaFunction:
     Type: AWS::Serverless::Function
