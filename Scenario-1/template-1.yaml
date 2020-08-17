@@ -4,6 +4,29 @@ Description: ECS Infrastructure Interview Template 1
 
 Parameters:
 
+  pArtifactS3BucketName:
+    Description: Name of the S3 bucket for storing source code
+    Type: String
+
+  pArtifactS3Key:
+    Description: Source code key for the artifact in S3 bucket
+    Type: String
+
+  pFunctionAliasName:
+    Description: Alias name for lambda function
+    Type: String
+
+  pLogLevel:
+    Description: Verbosity level for logging
+    Type: String
+    Default: Info
+    AllowedValues:
+      - Info
+      - Warning
+      - Error
+      - Debug
+      - Critical
+
 Resources:
   rLambdaFunctionRole:
     Type: AWS::IAM::Role
