@@ -90,6 +90,7 @@ Resources:
           - !Ref rLambdaFunctionAliasErrorAlarm
           - !Ref rLambdaFunctionVersionErrorAlarm
       Runtime: python3.7
+      Timeout: 5
 
   rLambdaArnSSMParameter:
     Type: AWS::SSM::Parameter

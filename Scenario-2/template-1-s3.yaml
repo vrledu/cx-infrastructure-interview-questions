@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Create a S3 Bucket to store python lambda source package
+
+Parameters:
+
+ pS3bucketname:
+   Description: S3 bucket name to store lambda source package
+   AllowedPattern: '(?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)'
+   ConstraintDescription: name should be atleast 3-63 characters long,must contain only lowercase, numbers and hyphens,
+    must start and end with a lowercase letter or a number, names must not be formatted as an IP address.It cannot start or
+    end with a hyphen.
+   Type: String
+
+Resources:
+
+  rSourceCodeBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref pS3bucketname
+      VersioningConfiguration:
+        Status: Enabled
+
+  rLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: S3Lambda
+      code:
+        S3Bucket: !Ref pS3bucketname
+        S3Key: GetItemDynamoDbLambda.zip
+      Description: This will be used to run the lambda python code
+      Handler: get_item.lambda_handler
+      Role: 'arn:aws:iam::*:role/s3-lambda-role'
+      Runtime: python3.7
+      Timeout: 10
+
+Outputs:
+
+  S3BucketName:
+    Description: Created S3 bucketname
+    Value: !Ref rSourceCodeBucket
