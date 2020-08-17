@@ -2,6 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: ECS Infrastructure Interview Template 1
 
+Transform: AWS::Serverless-2016-10-31
+
 Parameters:
 
   pArtifactS3BucketName:
@@ -26,6 +28,10 @@ Parameters:
       - Error
       - Debug
       - Critical
+
+  pSSMPrefix:
+    Description: SSM Parameter prefix name
+    Type: String
 
 Resources:
   rLambdaFunctionRole:
@@ -66,11 +72,20 @@ Resources:
         Bucket: !Ref pArtifactS3BucketName
         Key: !Ref pArtifactS3Key
       Role: !Ref rLambdaFunctionRole
+      AutoPublishAlias: !Ref pFunctionAliasName
       DeploymentPreference:
         Type: AllAtOnce
       Alarms:
         - !Ref rLambdaFunctionAliasErrorAlarm
         - !Ref rLambdaFunctionVersionErrorAlarm
+
+  rLambdaArnSSMParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: !Sub '${AWS::StackName} Lambda Arn'
+      Name: !Sub '/${pSSMPrefix}/LambdaArn'
+      Type: String
+      Value: !GetAtt rLambdaFunction.Arn
 
   rLambdaFunctionAliasErrorAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -107,3 +122,10 @@ Resources:
       Threshold: 0
 
 Outputs:
+  LambdaFunction:
+    Description: Lambda function Alias
+    Value: !Ref rLambdaFunction.Alias
+
+  LambdaFunctionSSMParameter:
+    Description: Lambda function Arn
+    Value: !Ref rLambdaArnSSMParameter
