@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: ECS Infrastructure Interview Template 1
 
+Transform: AWS::Serverless-2016-10-31
 
 Parameters:
 
@@ -74,7 +75,7 @@ Resources:
   rLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: lambda.lambda_handler
+      Handler: lambda.handler
       Environment:
         Variables:
           LOG_LEVEL: !Ref pLogLevel
@@ -85,9 +86,9 @@ Resources:
       AutoPublishAlias: !Ref pFunctionAliasName
       DeploymentPreference:
         Type: AllAtOnce
-      Alarms:
-        - !Ref rLambdaFunctionAliasErrorAlarm
-        - !Ref rLambdaFunctionVersionErrorAlarm
+        Alarms:
+          - !Ref rLambdaFunctionAliasErrorAlarm
+          - !Ref rLambdaFunctionVersionErrorAlarm
 
   rLambdaArnSSMParameter:
     Type: AWS::SSM::Parameter
@@ -121,7 +122,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       Dimensions:
         - Name: Resource
-          Value: !Ref rLambdaFunction.Version
+          Value: !Ref rLambdaFunction.VersionDescription
         - Name: FunctionName
           Value: !Ref rLambdaFunction
       EvaluationPeriods: 1
