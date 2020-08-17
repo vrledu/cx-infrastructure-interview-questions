@@ -48,7 +48,7 @@ Resources:
       Alarms:
         - !Ref rLambdaFunctionAliasErrorAlarm
         - !Ref rLambdaFunctionVersionErrorAlarm
-    ​
+
   rLambdaFunctionAliasErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -65,7 +65,7 @@ Resources:
       Period: 300
       Statistic: Sum
       Threshold: 0
-    ​
+
   rLambdaFunctionVersionErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
