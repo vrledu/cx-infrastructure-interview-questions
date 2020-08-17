@@ -89,6 +89,7 @@ Resources:
         Alarms:
           - !Ref rLambdaFunctionAliasErrorAlarm
           - !Ref rLambdaFunctionVersionErrorAlarm
+      Runtime: python3.7
 
   rLambdaArnSSMParameter:
     Type: AWS::SSM::Parameter
@@ -122,7 +123,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       Dimensions:
         - Name: Resource
-          Value: !Ref rLambdaFunction.VersionDescription
+          Value: !Ref rLambdaFunction.Version
         - Name: FunctionName
           Value: !Ref rLambdaFunction
       EvaluationPeriods: 1
