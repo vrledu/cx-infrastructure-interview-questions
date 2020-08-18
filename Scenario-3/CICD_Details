@@ -1,0 +1,31 @@
+Scenario-3 CICD Diagram:
+
+Continuous integration (CI) and continuous delivery (CD) embody a culture, set of operating principles,
+and collection of practices that enable application development teams to deliver code changes more frequently and reliably.
+The implementation is also known as the CI/CD pipeline.
+
+The technical goal of CI is to establish a consistent and automated way to build, package, and test applications.
+With consistency in the integration process in place, teams are more likely to commit code changes more frequently,
+which leads to better collaboration and software quality.
+
+Continuous delivery picks up where continuous integration ends. CD automates the delivery of applications to selected infrastructure environments.
+Most teams work with multiple environments other than the production, such as QA and Pre-Prod environments, and CD ensures there is an automated way to push code changes to them.
+
+Most development teams typically have one or more development and testing environments where application changes are staged for testing and review.
+A CI/CD tool such as Jenkins, CircleCI, AWS CodeBuild, Bamboo, or Travis CI is used to automate the steps and provide reporting.
+A typical CD pipeline has build, test, and deploy stages. A CICD pipelines include many of these steps:
+a. Pulling code from version control and executing a build.
+b. Moving code to the target computing environment.
+c. Managing the environment variables and configuring them for the target environment.
+d. Pushing application components to their appropriate services, such as web servers, API services, and database services.
+e. Executing any steps required to restarts services or call service endpoints that are needed for new code pushes.
+f. Executing continuous tests and rollback environments if tests fail.
+g. Providing log data and alerts on the state of the delivery.
+
+
+
+In the diagram, Developer push code to a git repo, AWS CodeCommit used merge the changes via pull request into master branch of the repo.
+CodeBuild will pickup the merged changes from master and then code would be processed and zipped into deployment packages and templates.
+These are stored in the Build Artifacts S3 Bucket where they're picked up by CloudFormation.
+CloudFormation will create a change-set in the QA environment, pause for review and can be either approved or rejected by a user with those permissions.
+If rejected, the change-set will not be executed and a new change will need to be pushed through. If approved, CloudFormation will execute the change-set and begin to build the application into the QA environment. If successful, the process will continue and a change -set will be created in the next environment. Upon failure to execute the change-set, the update is rolled back and the CodePipeline is stopped. A new change will need to be pushed through the Pipeline to fix the error and to progress through the staging environments.The same steps are then repeated for each of the Pre-prod and Prod environments that are specified.
