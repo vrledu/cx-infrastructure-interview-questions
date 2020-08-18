@@ -28,4 +28,7 @@ In the diagram, Developer push code to a git repo, AWS CodeCommit used merge the
 CodeBuild will pickup the merged changes from master and then code would be processed and zipped into deployment packages and templates.
 These are stored in the Build Artifacts S3 Bucket where they're picked up by CloudFormation.
 CloudFormation will create a change-set in the QA environment, pause for review and can be either approved or rejected by a user with those permissions.
-If rejected, the change-set will not be executed and a new change will need to be pushed through. If approved, CloudFormation will execute the change-set and begin to build the application into the QA environment. If successful, the process will continue and a change -set will be created in the next environment. Upon failure to execute the change-set, the update is rolled back and the CodePipeline is stopped. A new change will need to be pushed through the Pipeline to fix the error and to progress through the staging environments.The same steps are then repeated for each of the Pre-prod and Prod environments that are specified.
+If rejected, the change-set will not be executed and a new change will need to be pushed through. If approved, CloudFormation will execute the change-set and begin to build the application into the QA environment.
+If successful, the process will continue and a change -set will be created in the next environment. Upon failure to execute the change-set, the update is rolled back and the CodePipeline is stopped.
+A new change will need to be pushed through the Pipeline to fix the error and to progress through the pre-prod environments.
+The same steps are then repeated for each of the Pre-prod and Prod environments that are specified.
