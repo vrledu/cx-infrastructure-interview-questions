@@ -57,6 +57,13 @@ Parameters:
       - INFO
       - DEBUG
 
+  pPhoneNumber:
+    Description: Phone number
+    Type: String
+    MinLength: '13'
+    MaxLength: '13'
+    Default: "+441234567890"
+
 Resources:
 
   rGetCustomerInformationAppFunctionRole:
@@ -74,6 +81,17 @@ Resources:
       Path: /
       Policies:
       # Add policy to read dynamodb
+      - PolicyName: dynamodb-getitem
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:Query
+            Resource:
+              - !GetAtt rCustomerInformationDynamoDb.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
@@ -82,8 +100,17 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri:
-        Bucket: # Bucket Name from parameters
-        Key: # Key from parameters
+        Bucket: !Ref pArtifactS3BucketName
+        Key: !Ref pArtifactS3Key
+      Environment:
+        Variables:
+          LOG_LEVEL: !Ref pLogLevel
+          TABLE_NAME: !Ref rCustomerInformationDynamoDb
+          TABLE_REGION: !Ref AWS::Region
+      Runtime: python3.7
+      Handler: get_item.lambda_handler
+      Timeout: 10
+      Role: !GetAtt rGetCustomerInformationAppFunctionRole.Arn
 
   # Complete DynamoDb resource for string attribute "PhoneNumber"
   rCustomerInformationDynamoDb:
@@ -91,17 +118,23 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: !Ref pPhoneNumber
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: !Ref pPhoneNumber
+          KeyType: "HASH"
 
 Outputs:
 
   GetCustomerInformationAppFunctionRole:
     Description: IAM function role Arn for the Get Customer Information App Function
-    Value: # Complete me
+    Value: !GetAtt rGetCustomerInformationAppFunctionRole.Arn
 
   GetCustomerInformationLambdaFunction:
     Description: Arn of Get Customer information Lambda Function
-    Value: # Complete me
+    Value: !GetAtt rGetCustomerInformationAppFunction.Arn
 
   CustomerInformationDynamoDb:
     Description: Customer Information Dynamo DB Table name
-    Value: # Complete me
+    Value: !Ref rCustomerInformationDynamoDb
